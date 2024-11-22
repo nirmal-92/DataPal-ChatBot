@@ -3,17 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ChatBot</title>
-    <link rel="stylesheet" href="/style.css">
+    <title>DataPal</title>
+    <link rel="stylesheet" href="../static/style.css">
 </head>
 <body>
+    <img src="chatgpt.jpg">
     <div class="chat-container">
-        <h1>ChatBot</h1>
+        <h1>DataPal</h1>
         <div id="chat-box">
             <div id="messages"></div>
         </div>
         <form id="chat-form">
-            <input type="text" id="user-message" placeholder="Type your message..." autocomplete="off">
+            <input 
+                type="text" 
+                id="user-message" 
+                placeholder="Type your message..." 
+                autocomplete="off"
+            >
             <button type="submit">Send</button>
         </form>
     </div>
@@ -24,6 +30,7 @@
 
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
+
             const userMessage = document.getElementById('user-message').value;
 
             // Display user message
@@ -38,16 +45,18 @@
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                 body: `message=${encodeURIComponent(userMessage)}`
             });
+
             const botMessage = await response.text();
 
             // Display bot response
             const botDiv = document.createElement('div');
             botDiv.className = 'bot-message';
-            botDiv.textContent = `ChatBot: ${botMessage}`;
+            botDiv.textContent = `DataPal: ${botMessage}`;
             messagesDiv.appendChild(botDiv);
 
+            // Clear input and auto-scroll to the latest message
             document.getElementById('user-message').value = '';
-            messagesDiv.scrollTop = messagesDiv.scrollHeight; // Auto-scroll to the latest message
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
         });
     </script>
 </body>
