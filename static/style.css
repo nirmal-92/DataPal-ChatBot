@@ -1,16 +1,14 @@
 /* General styles */
 body {
     font-family: 'Arial', sans-serif;
-    background-color: #f4f4f9;
+    background-color: #9696f1;
     margin: 0;
     padding: 0;
     display: flex;
     align-items: center;
     justify-content: center;
     height: 100vh;
-    background-image:image("chatgpt.avif");
 }
-
 /* Chat container */
 .chat-container {
     background: #fff;
