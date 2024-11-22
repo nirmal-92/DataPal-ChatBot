@@ -11,7 +11,7 @@ chat = model.start_chat()
 
 @app.route('/')
 def home():
-    return render_template('/index.html')
+    return render_template('templates/index.html')
 
 @app.route('/get_response', methods=['POST'])
 def get_response():
