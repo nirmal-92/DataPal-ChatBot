@@ -4,60 +4,87 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DataPal</title>
-    <link rel="stylesheet" href="../static/style.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <img src="chatgpt.jpg">
+    <!-- Displaying a static image with proper alt text -->
+    <div class="image-container">
+        <img src="{{ url_for('static', filename='chatgpt.jpg') }}" alt="DataPal Assistant" class="header-image">
+    </div>
+
     <div class="chat-container">
-        <h1>DataPal</h1>
+        <h1>Welcome to DataPal</h1>
+
+        <!-- Chat messages container -->
         <div id="chat-box">
             <div id="messages"></div>
         </div>
+
+        <!-- Chat form for user input -->
         <form id="chat-form">
             <input 
                 type="text" 
                 id="user-message" 
-                placeholder="Type your message..." 
+                placeholder="Type your message here..." 
                 autocomplete="off"
+                required
             >
             <button type="submit">Send</button>
         </form>
     </div>
 
     <script>
-        const form = document.getElementById('chat-form');
-        const messagesDiv = document.getElementById('messages');
+        // Functionality for the chat form and displaying messages
+        document.getElementById('chat-form').addEventListener('submit', async (event) => {
+            event.preventDefault();
 
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
+            const userMessageInput = document.getElementById('user-message');
+            const userMessage = userMessageInput.value.trim();
 
-            const userMessage = document.getElementById('user-message').value;
+            if (!userMessage) {
+                alert("Please type a message.");
+                return;
+            }
 
-            // Display user message
-            const userDiv = document.createElement('div');
-            userDiv.className = 'user-message';
-            userDiv.textContent = `You: ${userMessage}`;
-            messagesDiv.appendChild(userDiv);
+            // Display user's message
+            addMessageToChatBox('You', userMessage, 'user-message');
 
-            // Send message to the server
-            const response = await fetch('/get_response', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: `message=${encodeURIComponent(userMessage)}`
-            });
+            try {
+                // Sending the user's message to the server
+                const response = await fetch('/get_response', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: `message=${encodeURIComponent(userMessage)}`
+                });
 
-            const botMessage = await response.text();
+                const botMessage = await response.text();
 
-            // Display bot response
-            const botDiv = document.createElement('div');
-            botDiv.className = 'bot-message';
-            botDiv.textContent = `DataPal: ${botMessage}`;
-            messagesDiv.appendChild(botDiv);
+                // Display bot's response
+                addMessageToChatBox('DataPal', botMessage, 'bot-message');
+            } catch (error) {
+                console.error('Error fetching response:', error);
+                addMessageToChatBox('DataPal', 'Something went wrong. Please try again.', 'bot-message');
+            }
 
-            // Clear input and auto-scroll to the latest message
-            document.getElementById('user-message').value = '';
-            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            // Clear input and auto-scroll
+            userMessageInput.value = '';
+            scrollToBottom();
         });
+
+        // Function to add a message to the chat box
+        function addMessageToChatBox(sender, message, className) {
+            const messagesDiv = document.getElementById('messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = className;
+            messageDiv.textContent = `${sender}: ${message}`;
+            messagesDiv.appendChild(messageDiv);
+        }
+
+        // Function to auto-scroll to the latest message
+        function scrollToBottom() {
+            const chatBox = document.getElementById('chat-box');
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
     </script>
 </body>
 </html>
